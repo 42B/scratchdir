@@ -58,7 +58,7 @@ class ScratchDir:
     """
 
     def __init__(self, prefix: str = '', suffix: str = '.scratchdir', base: typing.Optional[str] = None,
-                 root: typing.Optional[str] = tempfile.tempdir, wd: typing.Optional[str] = None) -> None:
+                 root: typing.Optional[str] = tempfile.tempdir, wd: str = '') -> None:
         self.prefix = prefix
         self.suffix = suffix
         self.base = base
