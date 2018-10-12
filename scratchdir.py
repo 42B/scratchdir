@@ -18,8 +18,8 @@ __all__ = ['ScratchDirError', 'ScratchDirInactiveError', 'ScratchDir']
 
 # Prefix/suffix defaults in stdlib change starting in Python 3.5
 if sys.version_info >= (3, 5):
-    DEFAULT_PREFIX = None
-    DEFAULT_SUFFIX = None
+    DEFAULT_PREFIX = ''
+    DEFAULT_SUFFIX = ''
 else:
     DEFAULT_PREFIX = 'tmp'
     DEFAULT_SUFFIX = ''
@@ -276,8 +276,8 @@ class ScratchDir:
         return tempfile.mkdtemp(suffix, prefix, self.join(dir))
 
     @requires_activation
-    def filename(self, suffix: typing.Optional[str] = DEFAULT_SUFFIX,
-                 prefix: typing.Optional[str] = DEFAULT_PREFIX) -> str:
+    def filename(self, suffix: str = DEFAULT_SUFFIX,
+                 prefix: str = DEFAULT_PREFIX) -> str:
         """
         Create a filename that is unique within the scratch dir.
 
