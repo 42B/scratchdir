@@ -18,8 +18,8 @@ __all__ = ['ScratchDirError', 'ScratchDirInactiveError', 'ScratchDir']
 
 # Prefix/suffix defaults in stdlib change starting in Python 3.5
 if sys.version_info >= (3, 5):
-    DEFAULT_PREFIX = None
-    DEFAULT_SUFFIX = None
+    DEFAULT_PREFIX = ''
+    DEFAULT_SUFFIX = ''
 else:
     DEFAULT_PREFIX = 'tmp'
     DEFAULT_SUFFIX = ''
