@@ -7,22 +7,14 @@
 import functools
 import os
 import shutil
-import sys
 import tempfile
 import typing
 import uuid
 
-
 __all__ = ['ScratchDirError', 'ScratchDirInactiveError', 'ScratchDir']
 
-
-# Prefix/suffix defaults in stdlib change starting in Python 3.5
-if sys.version_info >= (3, 5):
-    DEFAULT_PREFIX = None
-    DEFAULT_SUFFIX = None
-else:
-    DEFAULT_PREFIX = 'tmp'
-    DEFAULT_SUFFIX = ''
+DEFAULT_PREFIX = tempfile.gettempprefix()
+DEFAULT_SUFFIX = ''
 
 
 class ScratchDirError(Exception):
@@ -43,11 +35,13 @@ def requires_activation(func):
     Decorate a bound method on the :class:`~scratchdir.ScratchDir` to assert that it is active before
     performing certain actions.
     """
+
     @functools.wraps(func)
     def decorator(self, *args, **kwargs):  # pylint: disable=missing-docstring
         if not self.is_active:
             raise ScratchDirInactiveError('ScratchDir must be active to perform this action')
         return func(self, *args, **kwargs)
+
     return decorator
 
 
@@ -125,7 +119,7 @@ class ScratchDir:
     @requires_activation
     def file(self, mode: str = 'w+b', buffering: int = -1, encoding: typing.Optional[str] = None,
              newline: typing.Optional[str] = None, suffix: typing.Optional[str] = DEFAULT_SUFFIX,
-             prefix: typing.Optional[str] = DEFAULT_PREFIX, dir: typing.Optional[str] = None) -> typing.IO:
+             prefix: str = DEFAULT_PREFIX, dir: typing.Optional[str] = None) -> typing.IO:
         """
         Create a new temporary file within the scratch dir.
 
@@ -155,7 +149,7 @@ class ScratchDir:
     @requires_activation
     def named(self, mode: str = 'w+b', buffering: int = -1, encoding: typing.Optional[str] = None,
               newline: typing.Optional[str] = None, suffix: typing.Optional[str] = DEFAULT_SUFFIX,
-              prefix: typing.Optional[str] = DEFAULT_PREFIX, dir: typing.Optional[str] = None,
+              prefix: str = DEFAULT_PREFIX, dir: typing.Optional[str] = None,
               delete: bool = True) -> typing.IO:
         """
         Create a new named temporary file within the scratch dir.
@@ -188,7 +182,7 @@ class ScratchDir:
     @requires_activation
     def spooled(self, max_size: int = 0, mode: str = 'w+b', buffering: int = -1,
                 encoding: typing.Optional[str] = None, newline: typing.Optional[str] = None,
-                suffix: typing.Optional[str] = DEFAULT_SUFFIX, prefix: typing.Optional[str] = DEFAULT_PREFIX,
+                suffix: typing.Optional[str] = DEFAULT_SUFFIX, prefix: str = DEFAULT_PREFIX,
                 dir: typing.Optional[str] = None) -> typing.IO:
         """
         Create a new spooled temporary file within the scratch dir.
@@ -223,7 +217,7 @@ class ScratchDir:
 
     @requires_activation
     def secure(self, suffix: typing.Optional[str] = DEFAULT_SUFFIX,
-               prefix: typing.Optional[str] = DEFAULT_PREFIX, dir: typing.Optional[str] = None,
+               prefix: str = DEFAULT_PREFIX, dir: typing.Optional[str] = None,
                text: bool = False, return_fd: bool = True) -> typing.Union[str, typing.Tuple[int, str]]:
         """
         Create a new temporary file within the scratch dir in the most secure manner possible
@@ -257,7 +251,7 @@ class ScratchDir:
 
     @requires_activation
     def directory(self, suffix: typing.Optional[str] = DEFAULT_SUFFIX,
-                  prefix: typing.Optional[str] = DEFAULT_PREFIX, dir: bool = None) -> str:
+                  prefix: str = DEFAULT_PREFIX, dir: bool = None) -> str:
         """
         Creates a new temporary directory within the scratch dir in the most secure manner possible and no
         chance of race conditions.
@@ -277,7 +271,7 @@ class ScratchDir:
 
     @requires_activation
     def filename(self, suffix: typing.Optional[str] = DEFAULT_SUFFIX,
-                 prefix: typing.Optional[str] = DEFAULT_PREFIX) -> str:
+                 prefix: str = DEFAULT_PREFIX) -> str:
         """
         Create a filename that is unique within the scratch dir.
 
